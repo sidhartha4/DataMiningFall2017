@@ -1,0 +1,43 @@
+Q1. Part 1
+Max Score:100
+Min Score:37
+Q1. Part 2
+Q1 Score:68
+Median Score:77.0
+Q3 Score:87
+Q1. Part 3
+Mean Score:76.715
+Q1. Part 4
+Mode Score:[77, 83]
+Q1. Part 5
+Emperical Variance:173.279
+
+
+Q2. Part 1
+Emperical Variance Before:173.279
+Emperical Variance After:1.0
+Q2. Part 2
+Original score:90 then z-score:1.009
+Q2. Part 3
+Pearson's coefficient between midterm scores and final scores is:0.544
+Q2. Part 4
+Covariance between midterm scores and final scores is:78.254
+
+
+
+Q3. Part 1
+jaccard coefficient:0.322
+Q3. Part 2
+h=1:6152.0
+h=2:715.328
+h=infinity:170.0
+Q3. Part 3
+cosine similarity:0.841
+Q3. Part 4
+KL Divergence:0.207
+
+
+
+Q4.
+chi-value:2468.183
+
