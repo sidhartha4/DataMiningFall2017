@@ -70,7 +70,9 @@ def question3():
 
 	for i in range(0,len(CML)):
 		pCML = float(CML[i])/totCML
+		#print(pCML)
 		pCBL = float(CBL[i])/totCBL
+		#print(pCBL)
 		p += (pCML*(math.log(pCML) - math.log(pCBL)))
 
 	p = round(p,3)	

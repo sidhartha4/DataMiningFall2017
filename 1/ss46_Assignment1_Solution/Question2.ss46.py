@@ -80,7 +80,7 @@ def data():
 		pearsonValTotal2 = pearsonValTotal2 + i*j
 
 	pearsonValTotal2 = pearsonValTotal2 - (totalElements*mean*meanEndsem)	
-		
+	
 	pearsonVal = float(pearsonValTotal)/float((totalElements-1)*stDeviation* stDeviationEndsem)	
 
 	pearsonVal2 = float(pearsonValTotal2)/ float((totalElements-1)*stDeviation* stDeviationEndsem)
