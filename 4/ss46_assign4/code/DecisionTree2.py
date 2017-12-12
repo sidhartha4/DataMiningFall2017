@@ -60,20 +60,18 @@ def main():
 	#Tree = trainDecisionTree(X_train, Y_train, max_depth)
 	
 	if "balance.scale" in trainFile:
-		max_depth = 3
+		max_depth = 50
 	elif "led" in trainFile:
-		max_depth = 7
+		max_depth = 50
 	elif "nursery" in trainFile:
-		max_depth = 7
+		max_depth = 50
 	elif "synthetic.social" in trainFile:
-		max_depth = 7	
+		max_depth = 115
 
 
 	clf = DecisionTreeClassifier(max_depth=max_depth)
 
     # Classifier for each fold
-
-    
 
 	clf.fit(X_train, Y_train)
 
@@ -91,6 +89,25 @@ def main():
 	print(float(correct)/total)
 
 
+
+	clf = RandomForestClassifier(max_depth=max_depth, n_estimators=500 )
+
+    # Classifier for each fold
+
+	clf.fit(X_train, Y_train)
+
+	predicted = clf.predict(X_test)
+
+	correct = 0
+	total = 0
+	print(type(predicted))
+	Y_test = np.array(Y_test)
+	for i,j in zip(predicted,Y_test):
+		total += 1
+		if int(i) == int(j):
+			correct += 1
+
+	print(float(correct)/total)
 
 
 

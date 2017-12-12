@@ -211,13 +211,13 @@ def findClassRandomForest(Tree,X):
 
 	return answer
 
-def trainRandomForest(X_train, Y_train, max_depth=5, num_of_trees =10 , number_of_samples=100):
+def trainRandomForest(X_train, Y_train, max_depth=5, num_of_trees =10 , number_of_samples=100, ):
 
 	Tree = []
-	
+
 	TupleArr = []
 
-	number_of_samples = len(X_train)
+	#number_of_samples = len(X_train)
 
 	for i,j in zip(X_train, Y_train):
 		TupleArr.append((i,j))
@@ -231,6 +231,9 @@ def trainRandomForest(X_train, Y_train, max_depth=5, num_of_trees =10 , number_o
 		    r = random.choice(TupleArr)
 		    X.append(r[0])
 		    Y.append(r[1])
+		
+		if i%10 == 0:
+			print(i)
 
 		Tree.append(trainDecisionTree(X,Y, max_depth))
 
@@ -265,25 +268,23 @@ def main():
 
 	if "balance.scale" in trainFile:
 		max_depth = 50
-		num_of_trees = 100
+		num_of_trees = 1000
 		number_of_samples = len(X_train)
 
 	elif "led" in trainFile:
 		max_depth = 50
-		num_of_trees = 100
+		num_of_trees = 1000
 		number_of_samples = len(X_train)
 
 	elif "nursery" in trainFile:
 		max_depth = 50
-		num_of_trees = 100
+		num_of_trees = 1000
 		number_of_samples = len(X_train)
 
 	elif "synthetic.social" in trainFile:
-		max_depth = 115
-		num_of_trees = 40
-		number_of_samples = len(X_train)
-
-
+		max_depth = 100
+		num_of_trees = 70
+		number_of_samples = int(0.6*len(X_train))
 
 
 	Tree = trainRandomForest(X_train, Y_train, max_depth, num_of_trees, number_of_samples)
