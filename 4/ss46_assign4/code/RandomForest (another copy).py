@@ -115,12 +115,30 @@ def removekey(d, key):
 
 def trainDecisionTree(X_train, Y_train, max_depth=5, minimumLeafNum=10):
 	#print(minimumLeafNum)
+
 	#print(len(X_train))
 	GiniOld = GiniIndex(Y_train)
 	figureOutFeature, Partition, GiniMin = GiniIndexWrapper(X_train, Y_train)
 
+	flagSet = 0
+	for i in Partition.keys():
+		
+		X = []
+		Y = []
+		
+		for p,q in zip(Partition[i]["X_train"],Partition[i]["Y_train"]):
+			Y.append(q)
+			#print(p)
+			p1 = removekey(p, figureOutFeature)
+			#print(p1)
+			X.append(p1)
 
-	if GiniOld == GiniMin or max_depth == 0 or len(X_train) <= minimumLeafNum or len(X_train[0]) == 1:
+		if len(X) < minimumLeafNum:
+			flagSet = 1
+
+
+
+	if GiniOld == GiniMin or max_depth == 0 or len(X_train) <= minimumLeafNum or len(X_train[0]) == 1 or flagSet == 1:
 
 		keyVal = dict()
 		for i in Y_train:
@@ -237,7 +255,7 @@ def trainRandomForest(X_train, Y_train, max_depth=5, num_of_trees =10 , number_o
 	return Tree
 	
 
-def testRandomForest(Tree, X_test, Y_test, number_of_classes, name, printConf=0):
+def testRandomForest(Tree, X_test, Y_test, number_of_classes, name):
 
 	correct = 0
 	total = 0
@@ -264,8 +282,6 @@ def testRandomForest(Tree, X_test, Y_test, number_of_classes, name, printConf=0)
 			s = ""
 			for j in item:
 				s = s + str(j) + " "
-			if printConf == 1:
-				print(s)
 			output.write("%s\n" %s)
 
 
@@ -285,26 +301,26 @@ def main():
 
 
 	if "balance.scale" in trainFile:
-		max_depth = 3
+		max_depth = 50
 		num_of_trees = 150
 		number_of_samples = int(0.8*len(X_train))
 		number_of_classes = 3
 
 	elif "led" in trainFile:
-		max_depth = 7
+		max_depth = 50
 		num_of_trees = 150
 		number_of_samples = len(X_train)
 		number_of_classes = 2
 
 	elif "nursery" in trainFile:
-		max_depth = 7
-		num_of_trees = 70
+		max_depth = 50
+		num_of_trees = 150
 		number_of_samples = len(X_train)
 		number_of_classes = 5
 
 	elif "synthetic.social" in trainFile:
-		max_depth = 7
-		num_of_trees = 15
+		max_depth = 90
+		num_of_trees = 30
 		number_of_samples = len(X_train)
 		number_of_classes = 4
 
@@ -313,13 +329,13 @@ def main():
 	Tree = trainRandomForest(X_train, Y_train, max_depth, num_of_trees, number_of_samples, minimumLeafNum)
 	
 	acc = testRandomForest(Tree, X_train, Y_train, number_of_classes, trainFile)
-	#print("-----------Training Accuracy-----------------")
-	#print(acc)
+	print("-----------Training Accuracy-----------------")
+	print(acc)
 
 
-	acc = testRandomForest(Tree, X_test, Y_test, number_of_classes, testFile, 1)
-	#print("-----------Testing Accuracy----------------")
-	#print(acc)
+	acc = testRandomForest(Tree, X_test, Y_test, number_of_classes, testFile)
+	print("-----------Testing Accuracy----------------")
+	print(acc)
 
 	#print(GiniIndex(Y_train))
 

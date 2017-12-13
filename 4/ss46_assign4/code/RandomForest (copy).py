@@ -113,14 +113,13 @@ def removekey(d, key):
 
 
 
-def trainDecisionTree(X_train, Y_train, max_depth=5, minimumLeafNum=10):
-	#print(minimumLeafNum)
-	#print(len(X_train))
+def trainDecisionTree(X_train, Y_train, max_depth=5):
+
+
 	GiniOld = GiniIndex(Y_train)
 	figureOutFeature, Partition, GiniMin = GiniIndexWrapper(X_train, Y_train)
 
-
-	if GiniOld == GiniMin or max_depth == 0 or len(X_train) <= minimumLeafNum or len(X_train[0]) == 1:
+	if GiniOld == GiniMin or max_depth == 0 or len(X_train) == 1 or len(X_train[0]) == 1 :
 
 		keyVal = dict()
 		for i in Y_train:
@@ -161,7 +160,7 @@ def trainDecisionTree(X_train, Y_train, max_depth=5, minimumLeafNum=10):
 
 
 
-		ChildTree = trainDecisionTree(X, Y, max_depth-1, minimumLeafNum)	
+		ChildTree = trainDecisionTree(X, Y, max_depth-1)	
 		Tree["child"][i] = ChildTree
 
 
@@ -211,20 +210,20 @@ def findClassRandomForest(Tree,X):
 
 	return answer
 
-def trainRandomForest(X_train, Y_train, max_depth=5, num_of_trees =10 , number_of_samples=100, minimumLeafNum = 10):
-	#print(minimumLeafNum)
+def trainRandomForest(X_train, Y_train, max_depth=5, num_of_trees =10 , number_of_samples=100):
+
 	Tree = []
 	
 	TupleArr = []
 
-	#number_of_samples = len(X_train)
+	number_of_samples = len(X_train)
 
 	for i,j in zip(X_train, Y_train):
 		TupleArr.append((i,j))
 
 
 	for i in range(0,num_of_trees):
-		#print(i)
+		print(i)
 		X = []
 		Y = []
 		for j in range(0,number_of_samples):
@@ -232,42 +231,21 @@ def trainRandomForest(X_train, Y_train, max_depth=5, num_of_trees =10 , number_o
 		    X.append(r[0])
 		    Y.append(r[1])
 
-		Tree.append(trainDecisionTree(X,Y, max_depth, minimumLeafNum))
+		Tree.append(trainDecisionTree(X,Y, max_depth))
 
 	return Tree
 	
 
-def testRandomForest(Tree, X_test, Y_test, number_of_classes, name, printConf=0):
+def testRandomForest(Tree, X_test, Y_test):
 
 	correct = 0
 	total = 0
 	
-	confusionMat = []
-
-	for i in range(0,number_of_classes):
-		inList = []
-		for j in range(0,number_of_classes):
-			inList.append(0)
-		confusionMat.append(inList)
-
-
 	for i,j in zip(X_test, Y_test):
 		retVal = findClassRandomForest(Tree, i)
 		total += 1
 		if int(retVal) == int(j):
 			correct += 1
-
-		confusionMat[int(j)-1][int(retVal)-1] += 1
-
-	with open(name+ "_confusion_matrixR.txt", "w") as output:
-		for item in confusionMat:
-			s = ""
-			for j in item:
-				s = s + str(j) + " "
-			if printConf == 1:
-				print(s)
-			output.write("%s\n" %s)
-
 
 	acc = float(correct)/total
 
@@ -285,41 +263,38 @@ def main():
 
 
 	if "balance.scale" in trainFile:
-		max_depth = 3
-		num_of_trees = 150
-		number_of_samples = int(0.8*len(X_train))
-		number_of_classes = 3
+		max_depth = 50
+		num_of_trees = 60
+		number_of_samples = len(X_train)
 
 	elif "led" in trainFile:
-		max_depth = 7
-		num_of_trees = 150
+		max_depth = 50
+		num_of_trees = 60
 		number_of_samples = len(X_train)
-		number_of_classes = 2
 
 	elif "nursery" in trainFile:
-		max_depth = 7
-		num_of_trees = 70
+		max_depth = 50
+		num_of_trees = 60
 		number_of_samples = len(X_train)
-		number_of_classes = 5
 
 	elif "synthetic.social" in trainFile:
-		max_depth = 7
-		num_of_trees = 15
+		max_depth = 90
+		num_of_trees = 30
 		number_of_samples = len(X_train)
-		number_of_classes = 4
 
-	minimumLeafNum = 1
 
-	Tree = trainRandomForest(X_train, Y_train, max_depth, num_of_trees, number_of_samples, minimumLeafNum)
+
+
+	Tree = trainRandomForest(X_train, Y_train, max_depth, num_of_trees, number_of_samples)
 	
-	acc = testRandomForest(Tree, X_train, Y_train, number_of_classes, trainFile)
-	#print("-----------Training Accuracy-----------------")
-	#print(acc)
+	acc = testRandomForest(Tree, X_train, Y_train)
+	print("-----------Training Accuracy-----------------")
+	print(acc)
 
 
-	acc = testRandomForest(Tree, X_test, Y_test, number_of_classes, testFile, 1)
-	#print("-----------Testing Accuracy----------------")
-	#print(acc)
+	acc = testRandomForest(Tree, X_test, Y_test)
+	print("-----------Testing Accuracy----------------")
+	print(acc)
 
 	#print(GiniIndex(Y_train))
 

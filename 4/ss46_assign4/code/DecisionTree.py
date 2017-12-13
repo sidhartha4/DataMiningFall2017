@@ -38,8 +38,8 @@ def parseFiles(fileName):
 			#print(exampleToAdd)	
 			X_example.append(exampleToAdd)
 
-	print(len(X_example))	
-	print(len(Y_example))	
+	#print(len(X_example))	
+	#print(len(Y_example))	
 	return X_example, Y_example
 
 
@@ -177,16 +177,35 @@ def findClass(Tree,X):
 		randVal = random.sample(Tree["child"].keys(), 1)
 		return findClass(Tree["child"][randVal[0]], X)
 
-def testDecisionTree(Tree, X_test, Y_test):
+def testDecisionTree(Tree, X_test, Y_test, number_of_classes, name, printConf=0):
 
 	correct = 0
 	total = 0
-	
+	confusionMat = []
+
+	for i in range(0,number_of_classes):
+		inList = []
+		for j in range(0,number_of_classes):
+			inList.append(0)
+		confusionMat.append(inList)
+
+
 	for i,j in zip(X_test, Y_test):
 		retVal = findClass(Tree, i)
 		total += 1
 		if int(retVal) == int(j):
 			correct += 1
+
+		confusionMat[int(j)-1][int(retVal)-1] += 1
+
+	with open(name+ "_confusion_matrixD.txt", "w") as output:
+		for item in confusionMat:
+			s = ""
+			for j in item:
+				s = s + str(j) + " "
+			if printConf == 1:
+				print(s)
+			output.write("%s\n" %s)
 
 	acc = float(correct)/total
 
@@ -201,12 +220,16 @@ def main():
 
 	if "balance.scale" in trainFile:
 		max_depth = 3
+		number_of_classes = 3
 	elif "led" in trainFile:
 		max_depth = 7
+		number_of_classes = 2
 	elif "nursery" in trainFile:
 		max_depth = 7
+		number_of_classes = 5
 	elif "synthetic.social" in trainFile:
 		max_depth = 7	
+		number_of_classes = 4
 
 	X_train, Y_train = parseFiles(trainFile)
 	X_test, Y_test = parseFiles(testFile)
@@ -214,14 +237,16 @@ def main():
 	
 	Tree = trainDecisionTree(X_train, Y_train, max_depth)
 	
-	acc = testDecisionTree(Tree, X_train, Y_train)
-	print("-----------Training Accuracy-----------------")
-	print(acc)
+	acc = testDecisionTree(Tree, X_train, Y_train, number_of_classes, trainFile)
+	#print("-----------Training Accuracy-----------------")
+	#print(acc)
 
 
-	acc = testDecisionTree(Tree, X_test, Y_test)
-	print("-----------Testing Accuracy----------------")
-	print(acc)
+	acc = testDecisionTree(Tree, X_test, Y_test, number_of_classes, testFile, 1)
+	#print("-----------Testing Accuracy----------------")
+	#print(acc)
+
+
 
 	#print(GiniIndex(Y_train))
 
